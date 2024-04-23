@@ -33,7 +33,7 @@ int ComplexPlane::countIterations(Vector2f coord) {
 	complex<double> z(0.0, 0.0);
 	complex<double> c(coord.x, coord.y);
 	int count = 0;
-	while (count < 64 && z < 2.0) {
+	while (count < 64 && abs(z) < 2.0) {
 		z = z * z + c;
 		count++;
 	}
@@ -65,7 +65,7 @@ Vector2f ComplexPlane::mapPixelToCoords(Vector2i mousePixel) {
 	// ((n - a) / (b - a)) * (m_plane_size.(x/y)) + c
 
 	double cx = m_plane_center.x - m_plane_size.x / 2.0;
-	double cy = m_plane_center.y - m_plane_size.y / 2.0
+	double cy = m_plane_center.y - m_plane_size.y / 2.0;
 
 	// assuming a = 0.0
 	double resultX = (mousePixel.x / m_pixel_size.x) * m_plane_size.x + cx;
@@ -117,10 +117,10 @@ void ComplexPlane::loadText(Text& text) {
 
 void ComplexPlane::updateRender() {
 	if (m_state == State::CALCULATING) {
-		for (int i = 0; i < ; i++) {
-			for (int j = 0; j < ; j++) {
+		for (int i = 0; i < m_pixel_size.y; i++) {
+			for (int j = 0; j < m_pixel_size.x; j++) {
 				m_vArray[j + i * m_pixel_size.x].position = {(float)j, (float)i};
-				sf::Vector2f complexCoord = mapPixelToCoords(j, i);
+				sf::Vector2f complexCoord = mapPixelToCoords(Vector2i((float)j, (float)i));
 				int iterations = countIterations(complexCoord);
 				Uint8 r, g, b;
 				iterationsToRGB(iterations, r, g, b);

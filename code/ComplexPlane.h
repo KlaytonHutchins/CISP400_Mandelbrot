@@ -6,6 +6,7 @@
 #include <vector>
 #include <complex>
 
+using namespace sf;
 using namespace std;
 
 const unsigned int MAX_ITER = 64;

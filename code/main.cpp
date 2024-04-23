@@ -1,8 +1,4 @@
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <iostream>
-#include <sstream>
-#include <vector>
+#include "ComplexPlane.cpp"
 
 using namespace sf;
 using namespace std;
@@ -34,15 +30,15 @@ int main() {
 			if (event.type == sf::Event::MouseButtonPressed) {
 				if (event.mouseButton.button == sf::Mouse::Right) {
 					cp.zoomOut();
-					cp.setCenter(event.mouseButton.x, event.mouseButton.y);
+					cp.setCenter(Vector2i((float)event.mouseButton.x, (float)event.mouseButton.y));
 				}
 				else if (event.mouseButton.button == sf::Mouse::Left) {
 					cp.zoomIn();
-                                        cp.setCenter(event.mouseButton.x, event.mouseButton.y);
+                                        cp.setCenter(Vector2i((float)event.mouseButton.x, (float)event.mouseButton.y));
 				}
                         }
 			if (event.type == sf::Event::MouseMoved) {
-				cp.setMouseLocation(event.mouseButton.x, event.mouseButton.y);
+				cp.setMouseLocation(Vector2i((float)event.mouseButton.x, (float)event.mouseButton.y));
 			}
 		}
                 if (Keyboard::isKeyPressed(Keyboard::Escape)) {
@@ -51,8 +47,8 @@ int main() {
 
 		//Update
 		cp.updateRender();
-		cp.loadText(ss);
 		text.setString(ss);
+		cp.loadText(text);
 
 		//Draw
 		window.clear();
