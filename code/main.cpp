@@ -47,7 +47,7 @@ int main() {
 
 		//Update
 		cp.updateRender();
-		text.setString(ss);
+		text.setString(ss.str());
 		cp.loadText(text);
 
 		//Draw
