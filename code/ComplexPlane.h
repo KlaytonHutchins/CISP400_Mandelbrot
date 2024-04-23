@@ -1,4 +1,10 @@
 #pragma once
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <complex>
 
 using namespace std;
 
@@ -12,12 +18,12 @@ enum class State {
     DISPLAYING
 };
 
-class ComplexPlane {
+class ComplexPlane : public Drawable {
 private:
 	VertexArray m_vArray;
 	State m_state;
 	Vector2f m_mouseLocation;
-	Vectori m_pixel_size;
+	Vector2i m_pixel_size;
 	Vector2f m_plane_center;
 	Vector2f m_plane_size;
 	int m_zoomCount;
@@ -36,4 +42,4 @@ public:
 	void setMouseLocation(Vector2i mousePixel);
 	void loadText(Text& text);
 	void updateRender();
-}
+};

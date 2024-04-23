@@ -1,39 +1,86 @@
 #include "ComplexPlane.h"
 
-/*
+/********************************
         VertexArray m_vArray;
         State m_state;
         Vector2f m_mouseLocation;
-        Vectori m_pixel_size;
+        Vector2i m_pixel_size;
         Vector2f m_plane_center;
         Vector2f m_plane_size;
         int m_zoomCount;
         float m_aspectRatio;
-*/
+********************************/
 
-//Constructor
+/********************************
+	Constructor
+********************************/
 
 ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight) {
-	// Assign m_pixelWidth with the parameter values
+	m_pixel_size = Vector2i(pixelWidth, pixelHeight);
 	m_aspectRatio = (float)pixelWidth / (float)pixelHeight;
-	m_plane_center = Vector2f(0, 0);
+	m_plane_center = Vector2f(0.0, 0.0);
 	m_plane_size = Vector2f(BASE_WIDTH, BASE_HEIGHT * m_aspectRatio);
 	m_zoomCount = 0;
 	m_state = State::CALCULATING;
-	// Initialize VertexArray
+	m_vArray = VertexArray(sf::Points, pixelWidth * pixelHeight);
 }
 
-//Private Functions
+/********************************
+	Private Functions
+********************************/
 
-int ComplexPlane::countIterations(Vector2f coord) {}
-void ComplexPlane::iterationsToRGB(size_t count, Uint8& r, Uint8& g, Uint8& b) {}
-Vector2f ComplexPlane::mapPixelToCoords(Vector2i mousePixel) {}
+int ComplexPlane::countIterations(Vector2f coord) {
+	complex<double> z(0.0, 0.0);
+	complex<double> c(coord.x, coord.y);
+	int count = 0;
+	while (count < 64 && z < 2.0) {
+		z = z * z + c;
+		count++;
+	}
+	return count;
+}
 
-//Public Functions
+void ComplexPlane::iterationsToRGB(size_t count, Uint8& r, Uint8& g, Uint8& b) {
+	r = 0;
+	g = 0;                   // Black
+	b = 0;
+	if (count < 16) {        // Purple
+		r = 255;
+		b = 255;
+	} else if (count < 32) { // Blue
+		b = 255;
+	} else if (count < 48) { // Green
+                g = 255;
+        } else if (count < 64) { // Red
+                r = 255;
+        }
+}
+
+Vector2f ComplexPlane::mapPixelToCoords(Vector2i mousePixel) {
+	// map value n from range [a,b] into range [c,d]
+	// [ax,bx] = [0,m_pixel_size.x]
+	// [ay,by] = [0,m_pixel_size.y]
+	// [cx,dx] = [m_plane_center.x - m_plane_size.x / 2,m_plane_center.x + m_plane_size.x / 2]
+	// [cy,dy] = [m_plane_center.y + m_plane_size.y / 2,m_plane_center.y - m_plane_size.y / 2]
+	// ((n - a) / (b - a)) * (m_plane_size.(x/y)) + c
+
+	double cx = m_plane_center.x - m_plane_size.x / 2.0;
+	double cy = m_plane_center.y - m_plane_size.y / 2.0
+
+	// assuming a = 0.0
+	double resultX = (mousePixel.x / m_pixel_size.x) * m_plane_size.x + cx;
+	double resultY = (mousePixel.y / m_pixel_size.y) * m_plane_size.y + cy;
+	return Vector2f(resultX, resultY);
+}
+
+/********************************
+	Public Functions
+********************************/
 
 void ComplexPlane::draw(RenderTarget& target, RenderStates states) const {
 	target.draw(m_vArray);
 }
+
 void ComplexPlane::zoomIn() {
 	m_zoomCount++;
 	int localX = BASE_WIDTH * (pow(BASE_ZOOM, m_zoomCount));
@@ -41,6 +88,7 @@ void ComplexPlane::zoomIn() {
 	m_plane_size = Vector2f(localX, localY);
 	m_state = State::CALCULATING;
 }
+
 void ComplexPlane::zoomOut() {
         m_zoomCount--;
         int localX = BASE_WIDTH * (pow(BASE_ZOOM, m_zoomCount));
@@ -48,21 +96,35 @@ void ComplexPlane::zoomOut() {
         m_plane_size = Vector2f(localX, localY);
         m_state = State::CALCULATING;
 }
+
 void ComplexPlane::setCenter(Vector2i mousePixel) {
 	m_plane_center = ComplexPlane::mapPixelToCoords(mousePixel);
 	m_state = State::CALCULATING;
 }
+
 void ComplexPlane::setMouseLocation(Vector2i mousePixel) {
 	m_mouseLocation = ComplexPlane::mapPixelToCoords(mousePixel);
 }
+
 void ComplexPlane::loadText(Text& text) {
-	//Use stringstream to create output text
+	stringstream ss;
+	ss << "Mandelbrot Set" << endl;
+	ss << "Center: (" << m_plane_center.x << "," << m_plane_center.y << ")" << endl;
+	ss << "Cursor: (" << m_mouseLocation.x << "," << m_mouseLocation.y << ")" << endl;
+	ss << "Left-click to Zoom In" << endl;
+	ss << "Right-click to Zoom Out" << endl;
 }
+
 void ComplexPlane::updateRender() {
 	if (m_state == State::CALCULATING) {
-		for () {
-			for () {
-				
+		for (int i = 0; i < ; i++) {
+			for (int j = 0; j < ; j++) {
+				m_vArray[j + i * m_pixel_size.x].position = {(float)j, (float)i};
+				sf::Vector2f complexCoord = mapPixelToCoords(j, i);
+				int iterations = countIterations(complexCoord);
+				Uint8 r, g, b;
+				iterationsToRGB(iterations, r, g, b);
+				m_vArray[j + i * m_pixel_size.x].color = sf::Color(r,g,b);
 			}
 		}
 	m_state = State::DISPLAYING;
