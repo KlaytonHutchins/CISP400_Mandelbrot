@@ -30,11 +30,10 @@ ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight) {
 ********************************/
 
 int ComplexPlane::countIterations(Vector2f coord) {
-	// coord == -2.0, -3.61461
 	complex<double> z(0.0, 0.0);
 	complex<double> c(coord.x, coord.y);
 	int count = 0;
-	while (count < 64 && abs(z) < 2.0) {
+	while (count < MAX_ITER && abs(z) < 2.0) {
 		z = z * z + c;
 		count++;
 	}
@@ -85,16 +84,16 @@ void ComplexPlane::draw(RenderTarget& target, RenderStates states) const {
 
 void ComplexPlane::zoomIn() {
 	m_zoomCount++;
-	int localX = BASE_WIDTH * (pow(BASE_ZOOM, m_zoomCount));
-	int localY = BASE_HEIGHT * (pow(BASE_ZOOM, m_zoomCount));
+	double localX = BASE_WIDTH * (pow(BASE_ZOOM, m_zoomCount));
+	double localY = BASE_HEIGHT * (pow(BASE_ZOOM, m_zoomCount));
 	m_plane_size = Vector2f(localX, localY);
 	m_state = State::CALCULATING;
 }
 
 void ComplexPlane::zoomOut() {
         m_zoomCount--;
-        int localX = BASE_WIDTH * (pow(BASE_ZOOM, m_zoomCount));
-        int localY = BASE_HEIGHT * (pow(BASE_ZOOM, m_zoomCount));
+        double localX = BASE_WIDTH * (pow(BASE_ZOOM, m_zoomCount));
+        double localY = BASE_HEIGHT * (pow(BASE_ZOOM, m_zoomCount));
         m_plane_size = Vector2f(localX, localY);
         m_state = State::CALCULATING;
 }

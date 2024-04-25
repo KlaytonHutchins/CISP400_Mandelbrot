@@ -29,16 +29,16 @@ int main() {
 			}
 			if (event.type == sf::Event::MouseButtonPressed) {
 				if (event.mouseButton.button == sf::Mouse::Right) {
-					cp.zoomOut();
 					cp.setCenter(Vector2i((float)event.mouseButton.x, (float)event.mouseButton.y));
+					cp.zoomOut();
 				}
 				else if (event.mouseButton.button == sf::Mouse::Left) {
-					cp.zoomIn();
                                         cp.setCenter(Vector2i((float)event.mouseButton.x, (float)event.mouseButton.y));
+					cp.zoomIn();
 				}
                         }
 			if (event.type == sf::Event::MouseMoved) {
-				cp.setMouseLocation(Vector2i((float)event.mouseButton.x, (float)event.mouseButton.y));
+				cp.setMouseLocation(sf::Mouse::getPosition());
 			}
 		}
                 if (Keyboard::isKeyPressed(Keyboard::Escape)) {
