@@ -42,9 +42,11 @@ int ComplexPlane::countIterations(Vector2f coord) {
 
 void ComplexPlane::iterationsToRGB(size_t count, Uint8& r, Uint8& g, Uint8& b) {
 	r = 0;
-	g = 0;                   // Black
+	g = 0;
 	b = 0;
-	if (count < 16) {        // Purple
+	if (count == 0) {        // Black
+		return;
+	} else if (count < 16) { // Purple
 		r = 255;
 		b = 255;
 	} else if (count < 32) { // Blue
@@ -113,6 +115,7 @@ void ComplexPlane::loadText(Text& text) {
 	ss << "Cursor: (" << m_mouseLocation.x << "," << m_mouseLocation.y << ")" << endl;
 	ss << "Left-click to Zoom In" << endl;
 	ss << "Right-click to Zoom Out" << endl;
+	text.setString(ss.str());
 }
 
 void ComplexPlane::updateRender() {
@@ -120,11 +123,11 @@ void ComplexPlane::updateRender() {
 		for (int i = 0; i < m_pixel_size.y; i++) {
 			for (int j = 0; j < m_pixel_size.x; j++) {
 				m_vArray[j + i * m_pixel_size.x].position = {(float)j, (float)i};
-				sf::Vector2f complexCoord = mapPixelToCoords(Vector2i((float)j, (float)i));
+				Vector2f complexCoord = mapPixelToCoords(Vector2i((float)j, (float)i));
 				int iterations = countIterations(complexCoord);
 				Uint8 r, g, b;
 				iterationsToRGB(iterations, r, g, b);
-				m_vArray[j + i * m_pixel_size.x].color = sf::Color(r,g,b);
+				m_vArray[j + i * m_pixel_size.x].color = {r, g, b};
 			}
 		}
 	m_state = State::DISPLAYING;

@@ -4,10 +4,10 @@ using namespace sf;
 using namespace std;
 
 int main() {
-	
-	VideoMode vm(VideoMode::getDesktopMode().width, VideoMode::getDesktopMode().height);
+
+	VideoMode vm(VideoMode::getDesktopMode().width / 2, VideoMode::getDesktopMode().height / 2);
 	RenderWindow window(vm, "Mandelbrot Set", Style::Default);
-	ComplexPlane cp(VideoMode::getDesktopMode().width, VideoMode::getDesktopMode().height);
+	ComplexPlane cp(vm.width, vm.height);
 
 	//Font and text objects
 	Text text;
@@ -47,7 +47,6 @@ int main() {
 
 		//Update
 		cp.updateRender();
-		text.setString(ss.str());
 		cp.loadText(text);
 
 		//Draw
