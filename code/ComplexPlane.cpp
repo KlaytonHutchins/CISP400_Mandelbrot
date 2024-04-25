@@ -30,6 +30,7 @@ ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight) {
 ********************************/
 
 int ComplexPlane::countIterations(Vector2f coord) {
+	// coord == -2.0, -3.61461
 	complex<double> z(0.0, 0.0);
 	complex<double> c(coord.x, coord.y);
 	int count = 0;
@@ -61,17 +62,16 @@ void ComplexPlane::iterationsToRGB(size_t count, Uint8& r, Uint8& g, Uint8& b) {
 Vector2f ComplexPlane::mapPixelToCoords(Vector2i mousePixel) {
 	// map value n from range [a,b] into range [c,d]
 	// [ax,bx] = [0,m_pixel_size.x]
-	// [ay,by] = [0,m_pixel_size.y]
+	// [ay,by] = [m_pixel_size.y,0]
 	// [cx,dx] = [m_plane_center.x - m_plane_size.x / 2,m_plane_center.x + m_plane_size.x / 2]
 	// [cy,dy] = [m_plane_center.y + m_plane_size.y / 2,m_plane_center.y - m_plane_size.y / 2]
 	// ((n - a) / (b - a)) * (m_plane_size.(x/y)) + c
 
-	double cx = m_plane_center.x - m_plane_size.x / 2.0;
-	double cy = m_plane_center.y - m_plane_size.y / 2.0;
+	double cx = (float)m_plane_center.x - (float)m_plane_size.x / 2.0;
+	double cy = (float)m_plane_center.y - (float)m_plane_size.y / 2.0;
 
-	// assuming a = 0.0
-	double resultX = (mousePixel.x / m_pixel_size.x) * m_plane_size.x + cx;
-	double resultY = (mousePixel.y / m_pixel_size.y) * m_plane_size.y + cy;
+	double resultX = ((float)mousePixel.x / (float)m_pixel_size.x) * (float)m_plane_size.x + cx;
+	double resultY = (((float)mousePixel.y - (float)m_pixel_size.y) / (0.0 - (float)m_pixel_size.y)) * (float)m_plane_size.y + cy;
 	return Vector2f(resultX, resultY);
 }
 
