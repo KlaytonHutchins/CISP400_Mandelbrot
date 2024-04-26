@@ -119,15 +119,27 @@ void ComplexPlane::loadText(Text& text) {
 
 void ComplexPlane::updateRender() {
 	if (m_state == State::CALCULATING) {
-		for (int i = 0; i < m_pixel_size.y; i++) {
-			for (int j = 0; j < m_pixel_size.x; j++) {
-				m_vArray[j + i * m_pixel_size.x].position = {(float)j, (float)i};
-				Vector2f complexCoord = mapPixelToCoords(Vector2i((float)j, (float)i));
-				int iterations = countIterations(complexCoord);
-				Uint8 r, g, b;
-				iterationsToRGB(iterations, r, g, b);
-				m_vArray[j + i * m_pixel_size.x].color = {r, g, b};
-			}
+		vector<thread> threads;
+		unsigned int numThreads = thread::hardware_concurrency();
+		unsigned int rowsPerThread = m_pixel_size.y / numThreads;
+		for (unsigned int t = 0; t < numThreads; ++t) {
+			unsigned int startRow = t * rowsPerThread;
+			unsigned int endRow = (t == numThreads - 1) ? m_pixel_size.y : startRow + rowsPerThread;
+			threads.emplace_back(std::thread([&](unsigned int start, unsigned int end) {
+				for (int i = start; i < end; ++i) {
+					for (int j = 0; j < m_pixel_size.x; ++j) {
+						m_vArray[j + i * m_pixel_size.x].position = {(float)j, (float)i};
+						Vector2f complexCoord = mapPixelToCoords(Vector2i((float)j, (float)i));
+						int iterations = countIterations(complexCoord);
+						Uint8 r, g, b;
+						iterationsToRGB(iterations, r, g, b);
+						m_vArray[j + i * m_pixel_size.x].color = {r, g, b};
+					}
+				}
+			}, startRow, endRow));
+		}
+		for (auto& thread : threads) {
+			thread.join();
 		}
 	m_state = State::DISPLAYING;
 	}
