@@ -129,7 +129,7 @@ void ComplexPlane::updateRender() {
 			unsigned int endRow = (t == numThreads - 1) ? m_pixel_size.y : startRow + rowsPerThread;
 			threads.emplace_back(std::thread([&](unsigned int start, unsigned int end) {
 				for (unsigned int i = start; i < end; ++i) {
-					for (unsigned int j = 0; j < m_pixel_size.x; ++j) {
+					for (int j = 0; j < m_pixel_size.x; ++j) {
 						m_vArray[j + i * m_pixel_size.x].position = {(float)j, (float)i};
 						Vector2f complexCoord = mapPixelToCoords(Vector2i((float)j, (float)i));
 						int iterations = countIterations(complexCoord);
