@@ -1,4 +1,5 @@
 #include "ComplexPlane.h"
+#include <thread>
 
 /********************************
         VertexArray m_vArray;
@@ -32,7 +33,7 @@ ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight) {
 int ComplexPlane::countIterations(Vector2f coord) {
 	complex<double> z(0.0, 0.0);
 	complex<double> c(coord.x, coord.y);
-	const unsigned int count = 0;
+	unsigned int count = 0;
 	while (count < MAX_ITER && abs(z) < 2.0) {
 		z = z * z + c;
 		count++;
