@@ -32,7 +32,7 @@ ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight) {
 int ComplexPlane::countIterations(Vector2f coord) {
 	complex<double> z(0.0, 0.0);
 	complex<double> c(coord.x, coord.y);
-	int count = 0;
+	const unsigned int count = 0;
 	while (count < MAX_ITER && abs(z) < 2.0) {
 		z = z * z + c;
 		count++;
@@ -71,6 +71,7 @@ Vector2f ComplexPlane::mapPixelToCoords(Vector2i mousePixel) {
 
 	double resultX = ((float)mousePixel.x / (float)m_pixel_size.x) * (float)m_plane_size.x + cx;
 	double resultY = (((float)mousePixel.y - (float)m_pixel_size.y) / (0.0 - (float)m_pixel_size.y)) * (float)m_plane_size.y + cy;
+
 	return Vector2f(resultX, resultY);
 }
 
@@ -126,8 +127,8 @@ void ComplexPlane::updateRender() {
 			unsigned int startRow = t * rowsPerThread;
 			unsigned int endRow = (t == numThreads - 1) ? m_pixel_size.y : startRow + rowsPerThread;
 			threads.emplace_back(std::thread([&](unsigned int start, unsigned int end) {
-				for (int i = start; i < end; ++i) {
-					for (int j = 0; j < m_pixel_size.x; ++j) {
+				for (unsigned int i = start; i < end; ++i) {
+					for (unsigned int j = 0; j < m_pixel_size.x; ++j) {
 						m_vArray[j + i * m_pixel_size.x].position = {(float)j, (float)i};
 						Vector2f complexCoord = mapPixelToCoords(Vector2i((float)j, (float)i));
 						int iterations = countIterations(complexCoord);

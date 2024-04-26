@@ -38,7 +38,7 @@ int main() {
 				}
                         }
 			if (event.type == sf::Event::MouseMoved) {
-				cp.setMouseLocation(sf::Mouse::getPosition());
+				cp.setMouseLocation(sf::Mouse::getPosition(window));
 			}
 		}
                 if (Keyboard::isKeyPressed(Keyboard::Escape)) {
