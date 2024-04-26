@@ -18,7 +18,7 @@
 
 ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight) {
 	m_pixel_size = Vector2i(pixelWidth, pixelHeight);
-	m_aspectRatio = (float)pixelWidth / (float)pixelHeight;
+	m_aspectRatio = (double)pixelWidth / (double)pixelHeight;
 	m_plane_center = Vector2f(0.0, 0.0);
 	m_plane_size = Vector2f(BASE_WIDTH, BASE_HEIGHT * m_aspectRatio);
 	m_zoomCount = 0;
@@ -67,11 +67,11 @@ Vector2f ComplexPlane::mapPixelToCoords(Vector2i mousePixel) {
 	// [cy,dy] = [m_plane_center.y + m_plane_size.y / 2,m_plane_center.y - m_plane_size.y / 2]
 	// ((n - a) / (b - a)) * (m_plane_size.(x/y)) + c
 
-	double cx = (float)m_plane_center.x - (float)m_plane_size.x / 2.0;
-	double cy = (float)m_plane_center.y - (float)m_plane_size.y / 2.0;
+	double cx = (double)m_plane_center.x - (double)m_plane_size.x / 2.0;
+	double cy = (double)m_plane_center.y - (double)m_plane_size.y / 2.0;
 
-	double resultX = ((float)mousePixel.x / (float)m_pixel_size.x) * (float)m_plane_size.x + cx;
-	double resultY = (((float)mousePixel.y - (float)m_pixel_size.y) / (0.0 - (float)m_pixel_size.y)) * (float)m_plane_size.y + cy;
+	double resultX = ((double)mousePixel.x / (double)m_pixel_size.x) * (double)m_plane_size.x + cx;
+	double resultY = (((double)mousePixel.y - (double)m_pixel_size.y) / (0.0 - (double)m_pixel_size.y)) * (double)m_plane_size.y + cy;
 
 	return Vector2f(resultX, resultY);
 }
@@ -124,14 +124,15 @@ void ComplexPlane::updateRender() {
 		vector<thread> threads;
 		unsigned int numThreads = thread::hardware_concurrency();
 		unsigned int rowsPerThread = m_pixel_size.y / numThreads;
+
 		for (unsigned int t = 0; t < numThreads; ++t) {
 			unsigned int startRow = t * rowsPerThread;
 			unsigned int endRow = (t == numThreads - 1) ? m_pixel_size.y : startRow + rowsPerThread;
 			threads.emplace_back(std::thread([&](unsigned int start, unsigned int end) {
 				for (unsigned int i = start; i < end; ++i) {
 					for (int j = 0; j < m_pixel_size.x; ++j) {
-						m_vArray[j + i * m_pixel_size.x].position = {(float)j, (float)i};
-						Vector2f complexCoord = mapPixelToCoords(Vector2i((float)j, (float)i));
+						m_vArray[j + i * m_pixel_size.x].position = {(double)j, (double)i};
+						Vector2f complexCoord = mapPixelToCoords(Vector2i((double)j, (double)i));
 						int iterations = countIterations(complexCoord);
 						Uint8 r, g, b;
 						iterationsToRGB(iterations, r, g, b);

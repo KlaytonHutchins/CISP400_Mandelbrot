@@ -29,11 +29,11 @@ int main() {
 			}
 			if (event.type == sf::Event::MouseButtonPressed) {
 				if (event.mouseButton.button == sf::Mouse::Right) {
-					cp.setCenter(Vector2i((float)event.mouseButton.x, (float)event.mouseButton.y));
+					cp.setCenter(Vector2i((double)event.mouseButton.x, (double)event.mouseButton.y));
 					cp.zoomOut();
 				}
 				else if (event.mouseButton.button == sf::Mouse::Left) {
-                                        cp.setCenter(Vector2i((float)event.mouseButton.x, (float)event.mouseButton.y));
+                                        cp.setCenter(Vector2i((double)event.mouseButton.x, (double)event.mouseButton.y));
 					cp.zoomIn();
 				}
                         }
